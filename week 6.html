@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Event Handling & Interactive Elements</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --bg-light: #ffffff;
+            --bg-dark: #1a1a1a;
+            --text-light: #333333;
+            --text-dark: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: var(--bg-light);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .section {
+            background: var(--bg-dark);
+            border-color: var(--success);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .section h2 {
+            color: var(--success);
+        }
+
+        .section h2 span {
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode input, 
+        body.dark-mode select, 
+        body.dark-mode textarea {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            border-color: #555;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            border: none;
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            min-height: 50px;
+        }
+
+        body.dark-mode .result {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .counter {
+            font-size: 3rem;
+            color: var(--accent);
+            margin: 20px 0;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .game-buttons button {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .faq-item {
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .faq-item {
+            border-color: #555;
+        }
+
+        .faq-question {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        body.dark-mode .faq-answer {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .faq-answer.active {
+            padding: 15px;
+            max-height: 200px;
+        }
+
+        .tab-container {
+            margin-top: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .tab {
+            background: #333;
+            color: white;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 0 8px 8px 8px;
+        }
+
+        body.dark-mode .tab-content {
+            border-color: #555;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .error {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success {
+            color: var(--success);
+            font-size: 1rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .valid {
+            border-color: var(--success) !important;
+        }
+
+        .invalid {
+            border-color: var(--danger) !important;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .game-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .game-buttons button {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>JavaScript Event Handling</h1>
+                <p class="subtitle">Interactive Elements & Form Validation</p>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+        </header>
+        
+        <div class="sections">
+            <!-- Part 1: Event Handling -->
+            <section class="section" id="part1">
+                <h2><span>🎮</span> Part 1: Event Handling</h2>
+                
+                <div class="input-group">
+                    <label for="colorInput">Type a color name:</label>
+                    <input type="text" id="colorInput" placeholder="e.g., red, blue, green">
+                    <div class="result" id="colorResult">This text will change color</div>
+                </div>
+                
+                <div class="input-group">
+                    <button id="clickDemo">Click Me!</button>
+                    <div class="result" id="clickResult">Click the button to see magic!</div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Hover over this box:</label>
+                    <div class="result" id="hoverArea" style="min-height: 80px; cursor: pointer;">
+                        Hover here to see effects
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Part 2: Interactive Elements -->
+            <section class="section" id="part2">
+                <h2><span>🚀</span> Part 2: Interactive Elements</h2>
+                
+                <div class="game-container">
+                    <h3>Click Counter Game</h3>
+                    <div class="counter" id="counter">0</div>
+                    <div class="game-buttons">
+                        <button id="incrementBtn">+1</button>
+                        <button id="decrementBtn">-1</button>
+                        <button id="resetBtn">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <h3>FAQ Section</h3>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What is JavaScript?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            JavaScript is a programming language that enables interactive web pages.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What is DOM?
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            DOM stands for Document Object Model - it represents the page structure.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-container">
+                    <h3>Tabbed Interface</h3>
+                    <div class="tabs">
+                        <button class="tab active" data-tab="tab1">Tab 1</button>
+                        <button class="tab" data-tab="tab2">Tab 2</button>
+                        <button class="tab" data-tab="tab3">Tab 3</button>
+                    </div>
+                    <div class="tab-content active" id="tab1">
+                        Content for Tab 1 - JavaScript Basics
+                    </div>
+                    <div class="tab-content" id="tab2">
+                        Content for Tab 2 - Event Handling
+                    </div>
+                    <div class="tab-content" id="tab3">
+                        Content for Tab 3 - DOM Manipulation
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Part 3: Form Validation -->
+            <section class="section" id="part3">
+                <h2><span>📋</span> Part 3: Form Validation</h2>
+                
+                <form id="validationForm">
+                    <div class="input-group">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" placeholder="Enter your full name">
+                        <div class="error" id="nameError">Name must be at least 2 characters long</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" placeholder="Enter your email">
+                        <div class="error" id="emailError">Please enter a valid email address</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" placeholder="Enter your password">
+                        <div class="error" id="passwordError">Password must be at least 8 characters with 1 number</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password:</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password">
+                        <div class="error" id="confirmError">Passwords do not match</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number">
+                        <div class="error" id="phoneError">Please enter a valid phone number</div>
+                    </div>
+                    
+                    <button type="submit">Submit Form</button>
+                    <div class="success" id="formSuccess">Form submitted successfully! 🎉</div>
+                </form>
+            </section>
+        </div>
+        
+        <footer>
+            <p>JavaScript Event Handling Assignment &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Part 1: Event Handling
+        
+        // Color input event
+        document.getElementById('colorInput').addEventListener('input', function(e) {
+            const color = e.target.value.toLowerCase();
+            const colorResult = document.getElementById('colorResult');
+            colorResult.textContent = `You typed: ${color}`;
+            colorResult.style.color = color;
+        });
+        
+        // Click event
+        document.getElementById('clickDemo').addEventListener('click', function() {
+            const clickResult = document.getElementById('clickResult');
+            const colors = ['#4361ee', '#f72585', '#4cc9f0', '#f8961e', '#43e97b'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            clickResult.innerHTML = `🎉 Button clicked! Color changed to <span style="color: ${randomColor}">${randomColor}</span>`;
+            clickResult.style.backgroundColor = randomColor + '20'; // Add transparency
+        });
+        
+        // Mouse events
+        const hoverArea = document.getElementById('hoverArea');
+        hoverArea.addEventListener('mouseenter', function() {
+            this.innerHTML = '🖱️ Mouse entered!';
+            this.style.backgroundColor = '#4cc9f0';
+            this.style.transform = 'scale(1.05)';
+        });
+        
+        hoverArea.addEventListener('mouseleave', function() {
+            this.innerHTML = 'Mouse left! Try hovering again.';
+            this.style.backgroundColor = '';
+            this.style.transform = 'scale(1)';
+        });
+        
+        // Part 2: Interactive Elements
+        
+        // Dark/Light mode toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            this.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+        
+        // Counter game
+        let count = 0;
+        const counterDisplay = document.getElementById('counter');
+        
+        document.getElementById('incrementBtn').addEventListener('click', function() {
+            count++;
+            updateCounter();
+        });
+        
+        document.getElementById('decrementBtn').addEventListener('click', function() {
+            if (count > 0) count--;
+            updateCounter();
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            count = 0;
+            updateCounter();
+        });
+        
+        function updateCounter() {
+            counterDisplay.textContent = count;
+            // Change color based on count
+            if (count >= 10) {
+                counterDisplay.style.color = '#f72585';
+            } else if (count >= 5) {
+                counterDisplay.style.color = '#f8961e';
+            } else {
+                counterDisplay.style.color = '#4361ee';
+            }
+        }
+        
+        // FAQ functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const isActive = answer.classList.contains('active');
+                
+                // Close all answers
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    ans.classList.remove('active');
+                });
+                
+                // Toggle current answer
+                if (!isActive) {
+                    answer.classList.add('active');
+                    this.querySelector('span').textContent = '−';
+                } else {
+                    this.querySelector('span').textContent = '+';
+                }
+            });
+        });
+        
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Part 3: Form Validation
+        
+        const form = document.getElementById('validationForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirmPassword');
+        const phoneInput = document.getElementById('phone');
+        
+        // Real-time validation
+        nameInput.addEventListener('input', validateName);
+        emailInput.addEventListener('input', validateEmail);
+        passwordInput.addEventListener('input', validatePassword);
+        confirmInput.addEventListener('input', validateConfirmPassword);
+        phoneInput.addEventListener('input', validatePhone);
+        
+        function validateName() {
+            const nameError = document.getElementById('nameError');
+            if (nameInput.value.length < 2) {
+                showError(nameInput, nameError, 'Name must be at least 2 characters long');
+                return false;
+            } else {
+                showSuccess(nameInput, nameError);
+                return true;
+            }
+        }
+        
+        function validateEmail() {
+            const emailError = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(emailInput.value)) {
+                showError(emailInput, emailError, 'Please enter a valid email address');
+                return false;
+            } else {
+                showSuccess(emailInput, emailError);
+                return true;
+            }
+        }
+        
+        function validatePassword() {
+            const passwordError = document.getElementById('passwordError');
+            const passwordRegex = /^(?=.*\d).{8,}$/;
+            
+            if (!passwordRegex.test(passwordInput.value)) {
+                showError(passwordInput, passwordError, 'Password must be at least 8 characters with at least 1 number');
+                return false;
+            } else {
+                showSuccess(passwordInput, passwordError);
+                return true;
+            }
+        }
+        
+        function validateConfirmPassword() {
+            const confirmError = document.getElementById('confirmError');
+            
+            if (confirmInput.value !== passwordInput.value) {
+                showError(confirmInput, confirmError, 'Passwords do not match');
+                return false;
+            } else {
+                showSuccess(confirmInput, confirmError);
+                return true;
+            }
+        }
+        
+        function validatePhone() {
+            const phoneError = document.getElementById('phoneError');
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            
+            if (!phoneRegex.test(phoneInput.value.replace(/[\s\-\(\)]/g, ''))) {
+                showError(phoneInput, phoneError, 'Please enter a valid phone number');
+                return false;
+            } else {
+                showSuccess(phoneInput, phoneError);
+                return true;
+            }
+        }
+        
+        function showError(input, errorElement, message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+        }
+        
+        function showSuccess(input, errorElement) {
+            errorElement.style.display = 'none';
+            input.classList.add('valid');
+            input.classList.remove('invalid');
+        }
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isConfirmValid = validateConfirmPassword();
+            const isPhoneValid = validatePhone();
+            
+            if (isNameValid && isEmailValid && isPasswordValid && isConfirmValid && isPhoneValid) {
+                const successElement = document.getElementById('formSuccess');
+                successElement.style.display = 'block';
+                successElement.textContent = 'Form submitted successfully! 🎉';
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    form.reset();
+                    successElement.style.display = 'none';
+                    document.querySelectorAll('input').forEach(input => {
+                        input.classList.remove('valid', 'invalid');
+                    });
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
